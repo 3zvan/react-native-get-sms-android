@@ -89,8 +89,10 @@ public class SmsModule extends ReactContextBaseJavaModule /*implements LoaderMan
             while (cursor != null && cursor.moveToNext()) {
                 boolean matchFilter = true;
 
+                int _id = cursor.getInt(cursor.getColumnIndex("_id"));
+
                 if (fid > -1)
-                    matchFilter = fid == cursor.getInt(cursor.getColumnIndex("_id"));
+                    matchFilter = fid == _id;
                 else if (ftid > -1)
                     matchFilter = ftid == cursor.getInt(cursor.getColumnIndex("thread_id"));
                 else if (fread > -1)
@@ -101,7 +103,7 @@ public class SmsModule extends ReactContextBaseJavaModule /*implements LoaderMan
                     matchFilter = fcontent.equals(cursor.getString(cursor.getColumnIndex("body")).trim());
 
                 if (minId > -1)
-                    matchFilter = matchFilter && minId >= cursor.getInt(cursor.getColumnIndex("_id"));
+                    matchFilter = matchFilter && minId >= _id;
                 if (fContentRegex != null && !fContentRegex.isEmpty())
                     matchFilter = matchFilter && cursor.getString(cursor.getColumnIndex("body")).matches(fContentRegex);
                 if (maxDate > -1)
