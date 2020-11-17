@@ -70,6 +70,7 @@ public class SmsModule extends ReactContextBaseJavaModule /*implements LoaderMan
             String uri_filter = filterJ.has("box") ? filterJ.optString("box") : "inbox";
             int fread = filterJ.has("read") ? filterJ.optInt("read") : -1;
             int fid = filterJ.has("_id") ? filterJ.optInt("_id") : -1;
+            int minId = filterJ.has("minId") ? filterJ.optInt("minId") : -1;
             int ftid = filterJ.has("thread_id") ? filterJ.optInt("thread_id") : -1;
             String faddress = filterJ.optString("address");
             String fcontent = filterJ.optString("body");
@@ -87,6 +88,7 @@ public class SmsModule extends ReactContextBaseJavaModule /*implements LoaderMan
 
             while (cursor != null && cursor.moveToNext()) {
                 boolean matchFilter = true;
+
                 if (fid > -1)
                     matchFilter = fid == cursor.getInt(cursor.getColumnIndex("_id"));
                 else if (ftid > -1)
@@ -98,6 +100,8 @@ public class SmsModule extends ReactContextBaseJavaModule /*implements LoaderMan
                 else if (fcontent != null && !fcontent.isEmpty())
                     matchFilter = fcontent.equals(cursor.getString(cursor.getColumnIndex("body")).trim());
 
+                if (minId > -1)
+                    matchFilter = matchFilter && minId >= cursor.getInt(cursor.getColumnIndex("_id"));
                 if (fContentRegex != null && !fContentRegex.isEmpty())
                     matchFilter = matchFilter && cursor.getString(cursor.getColumnIndex("body")).matches(fContentRegex);
                 if (maxDate > -1)
